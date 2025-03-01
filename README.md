@@ -1,2 +1,2 @@
-# anc-template
-A template to create a new game
+# grid
+A game where you have to connect two points on a grid
