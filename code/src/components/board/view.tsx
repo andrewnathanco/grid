@@ -19,21 +19,21 @@ function Tile(props: { index: number }) {
 
   const status = () => {
     // first check for start
-    if (index == game.start) return TileStatus.start;
+    if (index == game?.start) return TileStatus.start;
 
     // then check for end
-    if (index == game.end) return TileStatus.end;
+    if (index == game?.end) return TileStatus.end;
 
     // now check for blocks
-    if (game.blocks.includes(index)) return TileStatus.block;
+    if (game?.blocks?.includes(index)) return TileStatus.block;
 
     // now check for path items
-    if (game.path.includes(index)) return TileStatus.path;
+    if (game?.path?.includes(index)) return TileStatus.path;
 
     return TileStatus.inert;
   };
 
-  const active = () => game.active == props.index;
+  const active = () => game?.active == props.index;
 
   switch (status()) {
     case TileStatus.start:

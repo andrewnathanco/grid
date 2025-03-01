@@ -6,7 +6,7 @@ import { toTitleCase } from "../../util/words";
 import { ShareButton } from "../info/share";
 import { ResetButton } from "../board/view";
 
-export const baseVersion = "v0.2.6";
+export const baseVersion = "v0.3.6";
 
 function parseVersion(version: string): number[] {
   if (!version) {
@@ -23,8 +23,6 @@ export function GameInfo() {
   const [version, _] = createSignal(
     import.meta.env.VITE_VERSION ?? baseVersion
   );
-
-  createEffect(() => {});
 
   createEffect(() => {
     if (game.gamekey && (import.meta.env.VITE_VERSION ?? baseVersion)) {

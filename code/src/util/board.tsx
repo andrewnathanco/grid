@@ -7,18 +7,18 @@ export function isValidMove(index: number, game: Game): boolean {
   // 2. the active tile is adjacent to tile
   if (
     // adjacent on top
-    index - game.active == 6 ||
+    index - game?.active == 6 ||
     // adjacent on bottom
-    game.active - index == 6 ||
+    game?.active - index == 6 ||
     // adjacnet left
-    game.active - 1 == index ||
+    game?.active - 1 == index ||
     // adjacnet right
-    game.active + 1 == index
+    game?.active + 1 == index
   )
     return true;
 
-  if (game.blocks.includes(index)) return false;
-  if (game.start == index) return false;
+  if (game?.blocks?.includes(index)) return false;
+  if (game?.start == index) return false;
 
   return false;
 }
