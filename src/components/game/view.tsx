@@ -1,8 +1,10 @@
 import { createEffect, createSignal } from "solid-js";
-import { gamekey, today, useGame } from "./service";
+import { gamekey, GameStatus, today, useGame } from "./service";
 import { useInfoDialog } from "../info/view";
 import { game_name } from "../../util/const";
 import { toTitleCase } from "../../util/words";
+import { ShareButton } from "../info/share";
+import { ResetButton } from "../board/view";
 
 export const baseVersion = "v0.2.6";
 
@@ -22,29 +24,31 @@ export function GameInfo() {
     import.meta.env.VITE_VERSION ?? baseVersion
   );
 
-  // createEffect(() => {
-  //   if (game.gamekey && (import.meta.env.VITE_VERSION ?? baseVersion)) {
-  //     const newGame = game.gamekey && game.gamekey != gamekey();
+  createEffect(() => {});
 
-  //     const [currentMajor, currentMinor] = parseVersion(game.version);
-  //     const [envMajor, envMinor] = parseVersion(
-  //       import.meta.env.VITE_VERSION ?? baseVersion
-  //     );
+  createEffect(() => {
+    if (game.gamekey && (import.meta.env.VITE_VERSION ?? baseVersion)) {
+      const newGame = game.gamekey && game.gamekey != gamekey();
 
-  //     const newMajorMinorVersion =
-  //       currentMajor !== envMajor || currentMinor !== envMinor;
+      const [currentMajor, currentMinor] = parseVersion(game.version);
+      const [envMajor, envMinor] = parseVersion(
+        import.meta.env.VITE_VERSION ?? baseVersion
+      );
 
-  //     if (newGame || newMajorMinorVersion) {
-  //       localStorage.removeItem("template_game");
-  //       setGame(today(gamekey()));
-  //     }
+      const newMajorMinorVersion =
+        currentMajor !== envMajor || currentMinor !== envMinor;
 
-  //     if (newMajorMinorVersion) {
-  //       localStorage.removeItem("template_info");
-  //       open();
-  //     }
-  //   }
-  // });
+      if (newGame || newMajorMinorVersion) {
+        localStorage.removeItem(game_name + "_game");
+        setGame(today(gamekey()));
+      }
+
+      if (newMajorMinorVersion) {
+        localStorage.removeItem(game_name + "_info");
+        open();
+      }
+    }
+  });
 
   return (
     <div class="flex flex-col">
@@ -54,13 +58,31 @@ export function GameInfo() {
           <div>#{game.gamekey}</div>
           <div
             id="game-version"
-            class="font-semibold w-min h-min text-xs border-2 px-1 rounded-lg border-serria-950 dark:border-chilean-50 text-serria-950 dark:bg-serria-950 dark:text-serria-200"
+            class="font-semibold w-min h-min text-xs border-2 px-1 rounded-lg border-serria-950 dark:border-serria-200 text-serria-950 dark:bg-serria-950 dark:text-serria-200"
           >
             {version()}
           </div>
         </div>
       </div>
-      <div class="font-light">Description for the game</div>
+      <div class="font-light">Connect tiles to earn points</div>
+    </div>
+  );
+}
+
+export function Score() {
+  const [game, _] = useGame();
+
+  return (
+    <div class="flex flex-col space-y-2">
+      <div class="text-xl">Score: {game?.path?.length}</div>
+      {game?.path?.includes(game.end) ? (
+        <div class="flex flex-col space-y-2">
+          <ShareButton />
+          <ResetButton />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

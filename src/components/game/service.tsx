@@ -3,14 +3,23 @@ import { createContext, useContext } from "solid-js";
 import { SetStoreFunction, createStore } from "solid-js/store";
 import { baseVersion } from "./view";
 import { game_name } from "../../util/const";
-import { TileState } from "../board/view";
-import { createBoard } from "../../util/board";
+import { getGameValues } from "../../util/board";
 import seedrandom from "seedrandom";
+
+export enum GameStatus {
+  playing,
+  end,
+}
 
 export interface Game {
   version: string;
   gamekey: number;
-  board: TileState[];
+  active: number;
+  game_status: GameStatus;
+  blocks: number[];
+  start: number;
+  path: number[];
+  end: number;
 }
 
 export function gamekey() {
@@ -30,8 +39,15 @@ export function gamekey() {
 export function today(gamekey: number): Game {
   const rng = seedrandom(gamekey.toString());
 
+  const [start, end, blocks] = getGameValues(rng, gamekey);
   return {
-    board: createBoard(rng, gamekey),
+    active: start,
+    game_status: GameStatus.playing,
+    blocks,
+    // set last move as the start because if we went back to it we'd still have the same state
+    path: [start],
+    start,
+    end,
     version: import.meta.env.VITE_VERSION ?? baseVersion,
     gamekey,
   };
