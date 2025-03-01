@@ -1,1 +1,1 @@
-export const game_name = "template";
+export const game_name = "grid";

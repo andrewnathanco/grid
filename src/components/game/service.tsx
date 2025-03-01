@@ -3,10 +3,14 @@ import { createContext, useContext } from "solid-js";
 import { SetStoreFunction, createStore } from "solid-js/store";
 import { baseVersion } from "./view";
 import { game_name } from "../../util/const";
+import { TileState } from "../board/view";
+import { createBoard } from "../../util/board";
+import seedrandom from "seedrandom";
 
 export interface Game {
   version: string;
   gamekey: number;
+  board: TileState[];
 }
 
 export function gamekey() {
@@ -24,7 +28,10 @@ export function gamekey() {
 }
 
 export function today(gamekey: number): Game {
+  const rng = seedrandom(gamekey.toString());
+
   return {
+    board: createBoard(rng, gamekey),
     version: import.meta.env.VITE_VERSION ?? baseVersion,
     gamekey,
   };

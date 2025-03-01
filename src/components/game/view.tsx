@@ -54,7 +54,7 @@ export function GameInfo() {
           <div>#{game.gamekey}</div>
           <div
             id="game-version"
-            class="font-semibold w-min h-min dark:text-gray-200 text-xs border-2 px-1 dark:border-gray-200 rounded-lg border-black text-black"
+            class="font-semibold w-min h-min text-xs border-2 px-1 rounded-lg border-serria-950 dark:border-chilean-50 text-serria-950 dark:bg-serria-950 dark:text-serria-200"
           >
             {version()}
           </div>

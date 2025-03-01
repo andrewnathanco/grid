@@ -103,43 +103,6 @@ export function InfoDialog() {
               <div class="text-xl">What is {toTitleCase(game_name)}?</div>
               <div class="text-md font-light"></div>
             </div>
-            <div class="flex flex-col">
-              <div class="text-xl">Scoring</div>
-              <div class="text-md font-light">
-                You get scored by the number of colors you've guessed. The lower
-                the better.
-              </div>
-            </div>
-            <div class="flex flex-col space-y-4">
-              <div class="flex flex-col">
-                <div class="text-xl">Tiles</div>
-                <div class="font-light">
-                  Once you select three tiles you can submit your answer. If any
-                  are right they will become hollow. Keep going until all are
-                  hollow.
-                </div>
-              </div>
-              <div class="flex flex-col space-y-2">
-                <ul class="flex flex-wrap gap-2">
-                  <li class="flex flex-col space-y-2 items-center w-fit">
-                    <div class="h-20 w-20 border-8 border-woodsmoke-600 bg-woodsmoke-600 rounded-md"></div>
-                    <div>Selected</div>
-                  </li>
-                  <li class="flex flex-col space-y-2 items-center w-fit">
-                    <div class="h-20 w-20 border-8 border-woodsmoke-600 bg-woodsmoke-600 rounded-md shrink-lg"></div>
-                    <div>Unselected</div>
-                  </li>
-                  <li class="flex flex-col space-y-2 items-center w-fit">
-                    <div class="h-20 w-20 border-8 border-woodsmoke-600 rounded-md"></div>
-                    <div>Correct</div>
-                  </li>
-                  <li class="flex flex-col space-y-2 items-center w-fit">
-                    <div class="h-20 w-20 border-8 bg-woodsmoke-600 border-woodsmoke-600 rounded-full"></div>
-                    <div>Chosen</div>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </div>
