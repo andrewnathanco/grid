@@ -25,7 +25,7 @@ export interface Game {
 export function gamekey() {
   const now: Date = new Date();
   // starting date
-  const firstGame: Date = new Date(2024, 4, 24, 0, 0, 0);
+  const firstGame: Date = new Date(2025, 1, 0, 0, 0, 0);
   const estOffset = -5 * 60; // EST is UTC-5 hours
   const estFirstGame = new Date(firstGame.getTime() + estOffset * 60 * 1000);
 
@@ -36,10 +36,11 @@ export function gamekey() {
   return Math.floor(duration);
 }
 
-export function today(gamekey: number): Game {
+export function getGame(gamekey: number): Game {
   const rng = seedrandom(gamekey.toString());
 
   const [start, end, blocks] = getGameValues(rng, gamekey);
+
   return {
     active: start,
     game_status: GameStatus.playing,
@@ -59,7 +60,7 @@ const GameContext = createContext<[Game, SetStoreFunction<Game>]>([
 ]);
 
 export function GameProvider(props: any) {
-  let value = makePersisted(createStore(today(gamekey())), {
+  let value = makePersisted(createStore(getGame(gamekey())), {
     name: game_name + "_game",
   });
 

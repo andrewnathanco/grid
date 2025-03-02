@@ -13,7 +13,6 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.13.3",
     "@solidjs/start": "^1.0.1",
-    "add": "^2.0.6",
     "autoprefixer": "^10.4.19",
     "framer-motion": "^11.2.10",
     "motion": "^10.18.0",

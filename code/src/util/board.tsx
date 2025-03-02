@@ -1,15 +1,18 @@
 import { TileStatus } from "../components/board/view";
 import seedrandom, { PRNG } from "seedrandom";
-import { game_size } from "./const";
+import { game_size, grid_size } from "./const";
 import { Game } from "../components/game/service";
 
 export function isValidMove(index: number, game: Game): boolean {
+  // game over
+  if (game?.path?.includes(game.end)) return false;
+
   // 2. the active tile is adjacent to tile
   if (
     // adjacent on top
-    index - game?.active == 6 ||
+    index - game?.active == grid_size ||
     // adjacent on bottom
-    game?.active - index == 6 ||
+    game?.active - index == grid_size ||
     // adjacnet left
     game?.active - 1 == index ||
     // adjacnet right

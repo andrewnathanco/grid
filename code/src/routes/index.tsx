@@ -1,14 +1,13 @@
 import {
   GameProvider,
   GameStatus,
-  today,
+  getGame,
   useGame,
 } from "../components/game/service";
 import { GameInfo, Score } from "../components/game/view";
 import { InfoDialog, InfoDialogProvider } from "../components/info/view";
 import { GameBoard } from "../components/board/view";
 import { InfoButton } from "../components/info/button";
-import { createEffect } from "solid-js/types/server/reactive.js";
 
 export default function Home() {
   return (

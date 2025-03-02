@@ -73,10 +73,10 @@ export function getThemeIcon(theme: Theme) {
 }
 
 export function ThemeToggler() {
-  const [theme, setTheme] = createSignal(getTheme());
+  const [theme, setTheme] = createSignal(Theme.LIGHT);
 
   createEffect(() => {
-    setTheme(getTheme());
+    setTheme(Theme.LIGHT);
   });
 
   return (

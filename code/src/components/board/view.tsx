@@ -12,6 +12,12 @@ export enum TileStatus {
   block,
   inert,
 }
+export enum TileBorder {
+  top,
+  bottom,
+  left,
+  right,
+}
 
 function Tile(props: { index: number }) {
   const [game, setGame] = useGame();
@@ -33,28 +39,81 @@ function Tile(props: { index: number }) {
     return TileStatus.inert;
   };
 
+  const borders = () => {
+    const borders: TileBorder[] = [];
+    const indexPath = game.path.indexOf(index);
+    // we should always have it but in case we don't
+
+    // handle the start first if we have more than
+    const thisTile = index;
+
+    // see if we have a previous tile
+    if (indexPath < game.path.length && game.path.length > 1) {
+      const nextTile = game.path[indexPath + 1];
+
+      // top
+      if (nextTile == thisTile - grid_size) borders.push(TileBorder.top);
+
+      // bottom
+      if (nextTile == thisTile + grid_size) borders.push(TileBorder.bottom);
+
+      // left
+      if (nextTile == thisTile - 1) borders.push(TileBorder.left);
+
+      // right
+      if (nextTile == thisTile + 1) borders.push(TileBorder.right);
+    }
+
+    if (indexPath >= 1) {
+      const prevTile = game.path[indexPath - 1];
+
+      // top
+      if (prevTile == thisTile - grid_size) borders.push(TileBorder.top);
+
+      // bottom
+      if (prevTile == thisTile + grid_size) borders.push(TileBorder.bottom);
+
+      // left
+      if (prevTile == thisTile - 1) borders.push(TileBorder.left);
+
+      // right
+      if (prevTile == thisTile + 1) borders.push(TileBorder.right);
+    }
+
+    console.log(index, borders);
+    return borders;
+  };
+  createEffect(() => {
+    borders();
+  });
+
   const active = () => game?.active == props.index;
 
   switch (status()) {
     case TileStatus.start:
       return (
-        <Motion.div
+        <div
           onClick={() => {
             setGame("path", [game.start]);
             setGame("active", game.start);
           }}
-          class="h-12 w-12 border rounded-sm dark:bg-mallard-600 dark:border-mallard-800 bg-mallard-400 border-mallard-800"
-          animate={{ scale: [1, 0.8, 1] }}
-          transition={{
-            duration: active() ? 1 : 0,
-            repeat: Infinity,
-            easing: "ease-in-out",
+          classList={{
+            "border-2": borders().length > 0,
+            "border-t-mallard-800": !borders().includes(TileBorder.top),
+            "rounded-t-none": borders().includes(TileBorder.top),
+            "border-b-mallard-800": !borders().includes(TileBorder.bottom),
+            "rounded-b-none": borders().includes(TileBorder.bottom),
+            "border-l-mallard-800": !borders().includes(TileBorder.left),
+            "rounded-l-none": borders().includes(TileBorder.left),
+            "border-r-mallard-800": !borders().includes(TileBorder.right),
+            "rounded-r-none": borders().includes(TileBorder.right),
           }}
-        ></Motion.div>
+          class="h-12 w-12 border rounded-sm dark:bg-mallard-600 dark:border-mallard-800 bg-mallard-400 border-transparent"
+        ></div>
       );
     case TileStatus.path:
       return (
-        <Motion.div
+        <div
           onClick={() => {
             // when clearing the path, let's go back to where we just we
             const pathIndex = game.path.findIndex((item) => item == index);
@@ -64,62 +123,56 @@ function Tile(props: { index: number }) {
 
             setGame("active", game.path[game.path.length - 1]);
           }}
-          class="h-12 w-12 border rounded-sm dark:bg-serria-700 dark:border-serria-900 bg-serria-400 border-serria-800"
-          animate={{ scale: [1, 0.8, 1] }}
-          transition={{
-            duration: active() ? 1 : 0,
-            repeat: Infinity,
-            easing: "ease-in-out",
+          classList={{
+            "border-2": borders().length > 0,
+            "border-t-serria-800": !borders().includes(TileBorder.top),
+            "rounded-t-none": borders().includes(TileBorder.top),
+            "border-b-serria-800": !borders().includes(TileBorder.bottom),
+            "rounded-b-none": borders().includes(TileBorder.bottom),
+            "border-l-serria-800": !borders().includes(TileBorder.left),
+            "rounded-l-none": borders().includes(TileBorder.left),
+            "border-r-serria-800": !borders().includes(TileBorder.right),
+            "rounded-r-none": borders().includes(TileBorder.right),
           }}
-        ></Motion.div>
+          class="h-12 w-12 border dark:bg-serria-700 dark:border-serria-900 bg-serria-400 border-transparent rounded-sm "
+        ></div>
       );
     case TileStatus.block:
       return (
-        <Motion.div
-          class="h-12 w-12 border rounded-sm dark:bg-taupe-600 dark:border-taupe-950 bg-taupe-600 border-taupe-900"
-          animate={{ scale: [1, 0.8, 1] }}
-          transition={{
-            duration: active() ? 1 : 0,
-            repeat: Infinity,
-            easing: "ease-in-out",
-          }}
-        ></Motion.div>
+        <div class="h-12 w-12 border rounded-sm dark:bg-taupe-600 dark:border-taupe-950 bg-taupe-600 border-taupe-900"></div>
       );
     case TileStatus.end:
       return (
-        <Motion.div
+        <div
           onClick={() => {
             if (!isValidMove(index, game)) return;
-
-            setGame("game_status", GameStatus.end);
             setGame("active", props.index);
             setGame("path", [...game.path, props.index]);
           }}
-          class="h-12 w-12 border rounded-sm dark:bg-bourbon-500 dark:border-bourbon-950 bg-bourbon-500 border-bourbon-800"
-          animate={{ scale: [1, 0.8, 1] }}
-          transition={{
-            duration: active() ? 1 : 0,
-            repeat: Infinity,
-            easing: "ease-in-out",
+          classList={{
+            "border-2": borders().length > 0,
+            "border-t-serria-800": !borders().includes(TileBorder.top),
+            "rounded-t-none": borders().includes(TileBorder.top),
+            "border-b-serria-800": !borders().includes(TileBorder.bottom),
+            "rounded-b-none": borders().includes(TileBorder.bottom),
+            "border-l-serria-800": !borders().includes(TileBorder.left),
+            "rounded-l-none": borders().includes(TileBorder.left),
+            "border-r-serria-800": !borders().includes(TileBorder.right),
+            "rounded-r-none": borders().includes(TileBorder.right),
           }}
-        ></Motion.div>
+          class="h-12 w-12 rounded-sm dark:bg-bourbon-500 dark:border-bourbon-950 bg-bourbon-500 border-transparent"
+        ></div>
       );
     default:
       return (
-        <Motion.div
-          onClick={() => {
+        <div
+          onMouseOver={() => {
             if (!isValidMove(index, game)) return;
             setGame("active", props.index);
             setGame("path", [...game.path, props.index]);
           }}
           class="h-12 w-12 border rounded-sm dark:bg-serria-900 dark:border-serria-950 bg-serria-300 border-serria-600"
-          animate={{ scale: [1, 0.8, 1] }}
-          transition={{
-            duration: active() ? 1 : 0,
-            repeat: Infinity,
-            easing: "ease-in-out",
-          }}
-        ></Motion.div>
+        ></div>
       );
   }
 }

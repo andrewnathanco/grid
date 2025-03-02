@@ -10,9 +10,11 @@ import { createStore } from "solid-js/store";
 import { toTitleCase } from "../../util/words";
 import { game_name } from "../../util/const";
 import { ThemeToggler } from "../../util/theme";
+import { RandomGameButton, TodayModeButton } from "./button";
 
 interface InfoDialogData {
   dialog_status: boolean;
+  random_game_mode: boolean;
 }
 
 type InfoDialog = [
@@ -20,6 +22,8 @@ type InfoDialog = [
   {
     close: () => void;
     open: () => void;
+    randomMode: () => void;
+    todayMode: () => void;
   }
 ];
 
@@ -27,7 +31,10 @@ const InfoDialogContext = createContext<InfoDialog>();
 
 export function InfoDialogProvider(props: { children: any }) {
   let [dialog_data, set_dialog] = makePersisted(
-    createStore<InfoDialogData>({ dialog_status: true }),
+    createStore<InfoDialogData>({
+      dialog_status: true,
+      random_game_mode: false,
+    }),
     {
       name: game_name + "_info-dialog",
     }
@@ -44,6 +51,12 @@ export function InfoDialogProvider(props: { children: any }) {
         set_dialog("dialog_status", true);
         document.body.style.position = "relative";
         document.body.style.overflowY = "hidden";
+      },
+      randomMode() {
+        set_dialog("random_game_mode", true);
+      },
+      todayMode() {
+        set_dialog("random_game_mode", true);
       },
     },
   ];
@@ -81,7 +94,8 @@ export function InfoDialog() {
           >
             <div>{toTitleCase(game_name)}</div>
             <div class="flex">
-              <ThemeToggler />
+              <TodayModeButton />
+              <RandomGameButton />
               <button
                 onClick={() => {
                   close();
@@ -114,7 +128,8 @@ export function InfoDialog() {
               <div class="text-md font-light">
                 1. Start at the start tile
                 <br />
-                2. Your next tile must be a grid tile adjascent to the current tile
+                2. Your next tile must be a grid tile adjascent to the current
+                tile
                 <br />
                 3. Blocked tiles block your path
                 <br />

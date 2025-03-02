@@ -1,5 +1,5 @@
 import { createEffect, createSignal } from "solid-js";
-import { gamekey, GameStatus, today, useGame } from "./service";
+import { gamekey, GameStatus, getGame, useGame } from "./service";
 import { useInfoDialog } from "../info/view";
 import { game_name } from "../../util/const";
 import { toTitleCase } from "../../util/words";
@@ -19,13 +19,17 @@ function parseVersion(version: string): number[] {
 
 export function GameInfo() {
   const [game, setGame] = useGame();
-  const [__, { open }] = useInfoDialog();
+  const [info, { open }] = useInfoDialog();
   const [version, _] = createSignal(
     import.meta.env.VITE_VERSION ?? baseVersion
   );
 
   createEffect(() => {
-    if (game.gamekey && (import.meta.env.VITE_VERSION ?? baseVersion)) {
+    if (
+      game.gamekey &&
+      (import.meta.env.VITE_VERSION ?? baseVersion) &&
+      !info.random_game_mode
+    ) {
       const newGame = game.gamekey && game.gamekey != gamekey();
 
       const [currentMajor, currentMinor] = parseVersion(game.version);
@@ -38,7 +42,7 @@ export function GameInfo() {
 
       if (newGame || newMajorMinorVersion) {
         localStorage.removeItem(game_name + "_game");
-        setGame(today(gamekey()));
+        setGame(getGame(gamekey()));
       }
 
       if (newMajorMinorVersion) {
