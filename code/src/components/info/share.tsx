@@ -1,4 +1,5 @@
 import { game_name } from "../../util/const";
+import { toTitleCase } from "../../util/words";
 import { Game, useGame } from "../game/service";
 
 function getShare(game: Game) {
@@ -8,7 +9,7 @@ function getShare(game: Game) {
 
   score = `Score: ${game?.path?.length}`;
 
-  return [`${game_name} #${game?.gamekey}\n\n${score}`, shareURL];
+  return [`${toTitleCase(game_name)} #${game?.gamekey}\n${score}`, shareURL];
 }
 
 export function ShareButton() {
