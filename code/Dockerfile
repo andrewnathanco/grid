@@ -20,6 +20,7 @@ ENV VITE_BASE_URL=${BASE_URL}
 ARG SHARE_URL
 ENV VITE_SHARE_URL=${SHARE_URL}
 
+RUN pnpm i -g corepack@latest
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 RUN pnpm run build
 
