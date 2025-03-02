@@ -25,7 +25,7 @@ export interface Game {
 export function gamekey() {
   const now: Date = new Date();
   // starting date
-  const firstGame: Date = new Date(2025, 1, 0, 0, 0, 0);
+  const firstGame: Date = new Date(2025, 2, 0, 0, 0, 0);
   const estOffset = -5 * 60; // EST is UTC-5 hours
   const estFirstGame = new Date(firstGame.getTime() + estOffset * 60 * 1000);
 
