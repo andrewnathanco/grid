@@ -5,12 +5,24 @@
 @tailwind utilities;
 
 * {
-  @apply bg-chilean-50 text-serria-950 dark:bg-serria-950 dark:text-serria-200;
+  @apply text-serria-950 dark:bg-serria-950 dark:text-serria-200;
   font-family: Outfit;
   font-weight: 700;
 }
 
+body {
+  @apply bg-chilean-50
+}
+
 @layer utilities {
+  .unselectable {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
   .shrink-sm {
     transform: scale(0.9);
   }

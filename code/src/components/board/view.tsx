@@ -4,6 +4,10 @@ import { Motion } from "solid-motionone";
 import { useKeyDownEvent } from "@solid-primitives/keyboard";
 import { getGameValues, isValidMove } from "../../util/board";
 import { game_size, grid_size } from "../../util/const";
+import useIsMobile from "../../util/useMobile";
+import { createDraggable } from "@thisbeyond/solid-dnd";
+import MoveButton from "./move";
+import MoveButtonTarget from "./move";
 
 export enum TileStatus {
   path,
@@ -80,14 +84,8 @@ function Tile(props: { index: number }) {
       if (prevTile == thisTile + 1) borders.push(TileBorder.right);
     }
 
-    console.log(index, borders);
     return borders;
   };
-  createEffect(() => {
-    borders();
-  });
-
-  const active = () => game?.active == props.index;
 
   switch (status()) {
     case TileStatus.start:
@@ -166,6 +164,12 @@ function Tile(props: { index: number }) {
     default:
       return (
         <div
+          onDragOver={(event) => {}}
+          onClick={() => {
+            if (!isValidMove(index, game)) return;
+            setGame("active", props.index);
+            setGame("path", [...game.path, props.index]);
+          }}
           onMouseOver={() => {
             if (!isValidMove(index, game)) return;
             setGame("active", props.index);
@@ -178,6 +182,9 @@ function Tile(props: { index: number }) {
 }
 
 export function GameBoard() {
+  const isMobile = useIsMobile();
+  const draggable = createDraggable(1);
+
   const board = () => {
     game.active;
     game.path;
@@ -209,8 +216,8 @@ export function GameBoard() {
   };
 
   const moveDown = () => {
-    const newPath = [...game.path, game.active + grid_size];
-    const newActive = game.active - grid_size;
+    setGame("path", [...game.path, game.active + grid_size]);
+    setGame("active", game.active + grid_size);
   };
 
   createEffect(() => {
@@ -235,11 +242,15 @@ export function GameBoard() {
   });
 
   return (
-    <div class="dark:border-serria-900 dark:bg-serria-800 bg-serria-200 border-bourbon-800 border rounded-sm w-full flex flex-wrap p-4 gap-1 justify-center">
-      {board().map((_, index) => {
-        return <Tile index={index} />;
-      })}
-    </div>
+    <>
+      <div class="dark:border-serria-900 dark:bg-serria-800 bg-serria-200 border-bourbon-800 border rounded-sm w-full flex flex-wrap p-4 gap-1 justify-center">
+        {board().map((_, index) => {
+          return <Tile index={index} />;
+        })}
+      </div>
+
+      {isMobile() ? <MoveButtonTarget /> : <></>}
+    </>
   );
 }
 

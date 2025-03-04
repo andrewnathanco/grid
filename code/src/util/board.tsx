@@ -1,11 +1,14 @@
-import { TileStatus } from "../components/board/view";
-import seedrandom, { PRNG } from "seedrandom";
+import { PRNG } from "seedrandom";
 import { game_size, grid_size } from "./const";
 import { Game } from "../components/game/service";
 
 export function isValidMove(index: number, game: Game): boolean {
   // game over
+  if (index < 0) return false;
+  if (index >= game_size) return false;
   if (game?.path?.includes(game.end)) return false;
+  if (game?.blocks?.includes(index)) return false;
+  if (game?.start == index) return false;
 
   // 2. the active tile is adjacent to tile
   if (
@@ -19,9 +22,6 @@ export function isValidMove(index: number, game: Game): boolean {
     game?.active + 1 == index
   )
     return true;
-
-  if (game?.blocks?.includes(index)) return false;
-  if (game?.start == index) return false;
 
   return false;
 }
