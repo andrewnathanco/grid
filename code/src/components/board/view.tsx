@@ -5,9 +5,25 @@ import { useKeyDownEvent } from "@solid-primitives/keyboard";
 import { getGameValues, isValidMove } from "../../util/board";
 import { game_size, grid_size } from "../../util/const";
 import useIsMobile from "../../util/useMobile";
-import { createDraggable } from "@thisbeyond/solid-dnd";
-import MoveButton from "./move";
-import MoveButtonTarget from "./move";
+import {
+  createDraggable,
+  createDroppable,
+  DragDropDebugger,
+  DragDropProvider,
+  DragDropSensors,
+  DragEventHandler,
+  DragOverlay,
+} from "@thisbeyond/solid-dnd";
+import { StartTile } from "../info/view";
+
+declare module "solid-js" {
+  namespace JSX {
+    interface Directives {
+      draggable?: boolean;
+      droppable?: boolean;
+    }
+  }
+}
 
 export enum TileStatus {
   path,
@@ -25,7 +41,10 @@ export enum TileBorder {
 
 function Tile(props: { index: number }) {
   const [game, setGame] = useGame();
+
   const { index } = props;
+  const droppable = createDroppable(index);
+  const draggable = createDraggable(index);
 
   const status = () => {
     // first check for start
@@ -87,10 +106,32 @@ function Tile(props: { index: number }) {
     return borders;
   };
 
+  createEffect(() => {
+    if (droppable.isActiveDroppable) {
+      switch (status()) {
+        case TileStatus.end:
+          if (!isValidMove(index, game)) return;
+          setGame("active", props.index);
+          setGame("path", [...game.path, props.index]);
+          return;
+        case TileStatus.path:
+          return;
+        case TileStatus.inert:
+          if (!isValidMove(index, game)) return;
+          setGame("active", props.index);
+          setGame("path", [...game.path, props.index]);
+          return;
+      }
+    }
+  });
+
   switch (status()) {
     case TileStatus.start:
       return (
         <div
+          style={{ "touch-action": "none" }}
+          use:draggable
+          use:droppable
           onClick={() => {
             setGame("path", [game.start]);
             setGame("active", game.start);
@@ -112,6 +153,8 @@ function Tile(props: { index: number }) {
     case TileStatus.path:
       return (
         <div
+          use:droppable
+          use:draggable
           onClick={() => {
             // when clearing the path, let's go back to where we just we
             const pathIndex = game.path.findIndex((item) => item == index);
@@ -121,6 +164,7 @@ function Tile(props: { index: number }) {
 
             setGame("active", game.path[game.path.length - 1]);
           }}
+          style={{ "touch-action": "none" }}
           classList={{
             "border-2": borders().length > 0,
             "border-t-serria-800": !borders().includes(TileBorder.top),
@@ -137,11 +181,15 @@ function Tile(props: { index: number }) {
       );
     case TileStatus.block:
       return (
-        <div class="h-12 w-12 border rounded-sm dark:bg-taupe-600 dark:border-taupe-950 bg-taupe-600 border-taupe-900"></div>
+        <div
+          class="h-12 w-12 border rounded-sm dark:bg-taupe-600 dark:border-taupe-950 bg-taupe-600 border-taupe-900"
+          use:droppable
+        ></div>
       );
     case TileStatus.end:
       return (
         <div
+          use:droppable
           onClick={() => {
             if (!isValidMove(index, game)) return;
             setGame("active", props.index);
@@ -164,7 +212,7 @@ function Tile(props: { index: number }) {
     default:
       return (
         <div
-          onDragOver={(event) => {}}
+          use:droppable
           onClick={() => {
             if (!isValidMove(index, game)) return;
             setGame("active", props.index);
@@ -182,9 +230,6 @@ function Tile(props: { index: number }) {
 }
 
 export function GameBoard() {
-  const isMobile = useIsMobile();
-  const draggable = createDraggable(1);
-
   const board = () => {
     game.active;
     game.path;
@@ -193,64 +238,31 @@ export function GameBoard() {
   };
 
   const [game, setGame] = useGame();
-  const keyDownEvent = useKeyDownEvent();
-
-  const restart = () => {
-    setGame("path", [game.start]);
-    setGame("active", game.start);
-  };
-
-  const moveLeft = () => {
-    setGame("path", [...game.path, game.active - 1]);
-    setGame("active", game.active - 1);
-  };
-
-  const moveRight = () => {
-    setGame("path", [...game.path, game.active + 1]);
-    setGame("active", game.active + 1);
-  };
-
-  const moveUp = () => {
-    setGame("path", [...game.path, game.active - grid_size]);
-    setGame("active", game.active + grid_size);
-  };
-
-  const moveDown = () => {
-    setGame("path", [...game.path, game.active + grid_size]);
-    setGame("active", game.active + grid_size);
-  };
-
-  createEffect(() => {
-    const e = keyDownEvent();
-    if (!e) return;
-
-    switch (e?.key.toLowerCase()) {
-      case "h":
-      case "arrowleft":
-      case "j":
-      case "arrowdown":
-      case "k":
-      case "arrowup":
-      case "l":
-      case "arrowright":
-      case "r":
-        restart();
-      default:
-        e?.preventDefault();
-        break;
-    }
-  });
 
   return (
     <>
-      <div class="dark:border-serria-900 dark:bg-serria-800 bg-serria-200 border-bourbon-800 border rounded-sm w-full flex flex-wrap p-4 gap-1 justify-center">
-        {board().map((_, index) => {
-          return <Tile index={index} />;
-        })}
-      </div>
-
-      {isMobile() ? <MoveButtonTarget /> : <></>}
+      <DragDropProvider>
+        <DragDropSensors />
+        <div class="dark:border-serria-900 dark:bg-serria-800 bg-serria-200 border-bourbon-800 border rounded-sm w-full flex flex-wrap p-4 gap-1 justify-center">
+          {board().map((_, index) => {
+            return <Tile index={index} />;
+          })}
+        </div>
+        <DragOverlay>
+          {(draggable) => (
+            <>
+              <DraggedTile />
+            </>
+          )}
+        </DragOverlay>
+      </DragDropProvider>
     </>
+  );
+}
+
+function DraggedTile() {
+  return (
+    <div class="h-8 w-8 border-2 rounded-full bg-mallard-400 border-mallard-800"></div>
   );
 }
 
