@@ -176,8 +176,6 @@ export default function MoveButtonTarget() {
     }
   };
 
-  createEffect(() => {});
-
   return (
     <DragDropProvider onDragMove={onDragMove}>
       <MoveButtonDraggable />

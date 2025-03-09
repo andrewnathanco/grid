@@ -201,7 +201,7 @@ function GridTile() {
   );
 }
 
-function StartTile() {
+export function StartTile() {
   return (
     <div class="h-12 w-12 border rounded-sm dark:bg-mallard-600 dark:border-mallard-800 bg-mallard-400 border-mallard-800"></div>
   );
