@@ -10,12 +10,11 @@ import { createStore } from "solid-js/store";
 import { toTitleCase } from "../../util/words";
 import { game_name } from "../../util/const";
 import { ThemeToggler } from "../../util/theme";
-import { RandomGameButton, TodayModeButton, ToggleLefty } from "./button";
+import { RandomGameButton, TodayModeButton } from "./button";
 
 interface InfoDialogData {
   dialog_status: boolean;
   random_game_mode: boolean;
-  lefty: boolean;
 }
 
 type InfoDialog = [
@@ -25,8 +24,6 @@ type InfoDialog = [
     open: () => void;
     randomMode: () => void;
     todayMode: () => void;
-    setLefty: () => void;
-    setRighty: () => void;
   }
 ];
 
@@ -37,7 +34,6 @@ export function InfoDialogProvider(props: { children: any }) {
     createStore<InfoDialogData>({
       dialog_status: true,
       random_game_mode: false,
-      lefty: true,
     }),
     {
       name: game_name + "_info-dialog",
@@ -61,12 +57,6 @@ export function InfoDialogProvider(props: { children: any }) {
       },
       todayMode() {
         set_dialog("random_game_mode", true);
-      },
-      setLefty() {
-        set_dialog("lefty", true);
-      },
-      setRighty() {
-        set_dialog("lefty", false);
       },
     },
   ];
@@ -104,7 +94,6 @@ export function InfoDialog() {
           >
             <div>{toTitleCase(game_name)}</div>
             <div class="flex">
-              <ToggleLefty />
               <TodayModeButton />
               <RandomGameButton />
               <button

@@ -14,8 +14,6 @@ import {
   DragEventHandler,
   DragOverlay,
 } from "@thisbeyond/solid-dnd";
-import MoveButton from "./move";
-import MoveButtonTarget from "./move";
 import { StartTile } from "../info/view";
 
 declare module "solid-js" {
@@ -115,11 +113,14 @@ function Tile(props: { index: number }) {
           if (!isValidMove(index, game)) return;
           setGame("active", props.index);
           setGame("path", [...game.path, props.index]);
+          return;
         case TileStatus.path:
+          return;
         case TileStatus.inert:
           if (!isValidMove(index, game)) return;
           setGame("active", props.index);
           setGame("path", [...game.path, props.index]);
+          return;
       }
     }
   });
